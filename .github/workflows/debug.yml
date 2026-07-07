@@ -15,16 +15,16 @@ on:
         default: '1'
         type: choice
         options:
-        - 1
-        - lts
-        - nightly
+        - '1'
+        - 'lts'
+        - 'nightly'
 
 jobs:
   test:
     name: Julia ${{ inputs.version }} - ${{ inputs.os }} - ${{ github.event_name }}
     runs-on: ${{ inputs.os }}-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup interactive ssh session
         uses: Warpbuilds/action-debugger@v1.3
         with:
@@ -32,20 +32,9 @@ jobs:
       - name: Install system prerequisites
         if: runner.os == 'Linux'
         run: sudo apt-get install -y patchelf
-      - name: Setup julia
-        uses: julia-actions/setup-julia@v2
+      - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ inputs.version }}
-          arch: 'default'
-      - uses: actions/cache@v3
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-test-
-            ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@latest
-      - uses: julia-actions/julia-runtest@latest
+      - uses: julia-actions/cache@v3
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1

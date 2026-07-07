@@ -1,18 +1,23 @@
 name: CI
 on:
   push:
-      paths-ignore:
-        - 'README.md'
-      branches:
-        - main
+    paths-ignore:
+      - 'README.md'
+    branches:
+      - main
+    tags: ['*']
   pull_request:
-      paths-ignore:
-        - 'README.md'
-      branches:
-        - main
+    paths-ignore:
+      - 'README.md'
+    branches:
+      - main
+concurrency:
+  # Cancel intermediate builds: only if it is a pull request build.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 jobs:
   test:
-    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.version == 'nightly' }}
     strategy:
@@ -26,26 +31,14 @@ jobs:
         os:
           - ubuntu-latest
           - macOS-latest
-        arch: [x64]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Install system prerequisites
         if: runner.os == 'Linux'
         run: sudo apt-get install -y patchelf
-      - name: Setup julia
-        uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
-      - uses: actions/cache@v3
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-test-
-            ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@latest
-      - uses: julia-actions/julia-runtest@latest
+      - uses: julia-actions/cache@v3
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
