@@ -1,8 +1,7 @@
 using CondaPkg
 
-python_deps = ["jax<0.4", "numpy<2.1", "pytorch", "setuptools<70"]
-
-CondaPkg.add(CondaPkg.PkgREPL.parse_pkg.(python_deps))
+# Python dependencies are declared in test/CondaPkg.toml and installed
+# automatically by CondaPkg the first time the environment is used.
 
 @static if Sys.islinux()
     # conda-forge's libtorch ships with an executable stack, which hardened

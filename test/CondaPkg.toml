@@ -1,0 +1,7 @@
+channels = ["conda-forge"]
+
+[deps]
+jax = "<0.4"
+numpy = "<2.1"
+pytorch = ""
+setuptools = "<70"
