@@ -144,22 +144,11 @@ end
 
 ##  Deprecations  ##
 
-# NOTE: replace by the following when our julia lower bound get to ≥ v"1.9".
-# @deprecate(
-#     DLPack.share(A::StridedArray, ::Type{PyCall.PyObject}, from_dlpack),
-#     DLPack.share(A, PyCall.pyfunction(from_dlpack, PyCall.PyObject)),
-#     false
-# )
-function DLPack.share(A::StridedArray, ::Type{PyCall.PyObject}, from_dlpack)
-    Base.depwarn("""
-        `DLPack.share`(A, ::Type{PyObject}), from_dlpack) is deprecated, use
-        `DLPack.share`(A, from_dlpack) instead. If `from_dlpack` is a julia function,
-        use `pyfunction` to wrap it.
-        """,
-        :share
-    )
-    DLPack.share(A, PyCall.pyfunction(from_dlpack, PyCall.PyObject))
-end
+@deprecate(
+    DLPack.share(A::StridedArray, ::Type{PyCall.PyObject}, from_dlpack),
+    DLPack.share(A, PyCall.pyfunction(from_dlpack, PyCall.PyObject)),
+    #= export_old =# false
+)
 
 
 ##  Extension initialization  ##
