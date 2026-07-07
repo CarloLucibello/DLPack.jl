@@ -7,11 +7,7 @@ module CUDAExt
 ##  Dependencies  ##
 
 import DLPack
-@static if isdefined(Base, :get_extension)
-    import CUDA
-else
-    import ..CUDA
-end
+import CUDA
 
 
 ##  Extensions  ##

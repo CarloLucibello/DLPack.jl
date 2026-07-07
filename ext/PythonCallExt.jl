@@ -7,11 +7,7 @@ module PythonCallExt
 ##  Dependencies  ##
 
 import DLPack
-@static if isdefined(Base, :get_extension)
-    import PythonCall
-else
-    import ..PythonCall
-end
+import PythonCall
 
 
 ##  Extensions  ##
